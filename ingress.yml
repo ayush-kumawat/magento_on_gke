@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    # kubernetes.io/ingress.allow-http: "false"
+    # kubernetes.io/ingress.global-static-ip-name: "ext-ip"
+    kubernetes.io/ingress.global-static-ip-name: "magento-demo-ingress-ip"
+    # networking.gke.io/managed-certificates: "ssl-cert"
+    kubernetes.io/ingress.class: "gce"
+    # networking.gke.io/v1beta1.FrontendConfig: "stage-nginx-frontend-config"
+  name: magento-ingress
+  namespace: demo
+spec:  
+ rules:
+   - host: domain.example.com
+     http:
+      paths:
+      - path: /*
+        pathType: ImplementationSpecific
+        backend:
+          service:
+              name: magento
+              port:
+                number: 80

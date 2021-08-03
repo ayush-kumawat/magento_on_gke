@@ -1,0 +1,66 @@
+---      
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: magento
+  namespace: demo
+  labels:
+    app: magento
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: magento
+      tier: frontend
+  strategy:
+    # type: Recreate    
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: magento
+        tier: frontend
+    spec:
+      containers:
+        - image: gcr.io/PROJECT_ID/magento-demo:TAG
+          name: magento
+          ports:
+            - containerPort: 80
+              name: magento
+          resources:
+            requests:
+              memory: "500Mi"
+              cpu: "1"
+          readinessProbe:
+            httpGet:
+              path: /health-check.php
+              port: 80
+            initialDelaySeconds: 5
+            timeoutSeconds: 10
+            periodSeconds: 15
+          volumeMounts:
+            - mountPath: /var/www/html/app/etc/env.php
+              name: env-php
+              subPath: env.php
+              readOnly: false
+            - mountPath: /var/www/html/app/etc/config.php
+              name: config-php
+              subPath: config.php
+              readOnly: false
+            - mountPath: /var/www/html/health-check.php
+              name: health-check
+              subPath: health-check.php
+              readOnly: false
+      volumes:
+          - configMap:
+              name: php-env-configmap
+            name: env-php
+          - configMap:
+              name: php-configmap
+            name: config-php
+          - configMap:
+              name: health-check-configmap
+            name: health-check

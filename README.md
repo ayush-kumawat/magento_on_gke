@@ -12,7 +12,7 @@ CloudSQL will be connected through private ip address
  - Use this username and password in the env.php configmap file 
 example :-
         - CREATE USER 'dev_user'@'%' IDENTIFIED BY 'sasGraDeHJ0mK1vP';
-        - GRANT ALL ON db_wrangler.* TO 'dev_user'@'%';
+        - GRANT ALL ON db_dbname.* TO 'dev_user'@'%';
 
 ######################Ingress#######################
 
